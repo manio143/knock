@@ -60,7 +60,7 @@ Knockpy arguments
 .. code-block:: 
 
   $ knockpy -h
-  usage: knockpy [-h] [-v] [-w WORDLIST] [-r] [-c] [-j] domain
+  usage: knockpy [-h] [-v] [-w WORDLIST] [-r] [-c] [-j] [-b BRUTE_FORCE] domain
   
   ___________________________________________
   
@@ -81,6 +81,7 @@ Knockpy arguments
     -c, --csv       save output in csv
     -f, --csvfields add fields name to the first row of csv output file
     -j, --json      export full report in JSON
+    -b BRUTE_FORCE   use bruteforce attack with words up to BRUTE_FORCE characters
   
   example:
     knockpy domain.com
@@ -88,6 +89,7 @@ Knockpy arguments
     knockpy -r domain.com or IP
     knockpy -c domain.com
     knockpy -j domain.com
+    knockpy domain.com -b 5
 
 For virustotal subdomains support you can setting your API_KEY in the config.json file.
 

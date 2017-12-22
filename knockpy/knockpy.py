@@ -35,6 +35,7 @@ example:
   knockpy -r domain.com or IP
   knockpy -c domain.com
   knockpy -j domain.com
+  knockpy domain.com -b 5
 
 For virustotal subdomains support you can setting your API KEY in the
 config.json file.
@@ -132,12 +133,15 @@ def main():
 						action='store_true', required=False)
 	parser.add_argument('-j', '--json', help='export full report in JSON',
 						action='store_true', required=False)
+        parser.add_argument('-b', help='use bruteforce attack with words up to BRUTE_FORCE characters',
+                                        nargs=1, dest='brute_force', required=False)
 
-						
+
 	args = parser.parse_args()
 	
 	target = args.domain
 	wlist = args.wordlist
+        use_brute_force = args.brute_force
 	resolve_host = args.resolve
 	save_scan_csv = args.csv
 	save_scan_csvfields = args.csvfields
@@ -233,13 +237,26 @@ def main():
 	if not os.path.isfile(wordlist): 
 		exit('File not found: ' + wordlist)
 	
-	word_list = loadfile_wordlist(wordlist)
-	word_list = [item.lower() for item in word_list]
-	subdomain_list = subdomain_list + word_list
-	subdomain_list = list(set(subdomain_list))
-	subdomain_list = sorted(subdomain_list)
-	wordlist_count = len(subdomain_list)
-	
+        if(not use_brute_force):
+            word_list = loadfile_wordlist(wordlist)
+            word_list = [item.lower() for item in word_list]
+            subdomain_list = subdomain_list + word_list
+	    subdomain_list = list(set(subdomain_list))
+	    subdomain_list = sorted(subdomain_list)
+	    wordlist_count = len(subdomain_list)
+	else:
+            n = int(use_brute_force[0])
+            init('+ setting up brute force of %d' % n, True)
+            chars = "abcdefghijklmnopqrstuvwxyz0123456789-"
+            def next(k):
+                if(k == 0):
+                    return
+                for c in chars:
+                    yield c
+                    for s in next(k-1):
+                        yield s + str(c)
+            subdomain_list = next(n)
+            wordlist_count = len(chars)**n
 	'''
 	resolve domain
 	'''
